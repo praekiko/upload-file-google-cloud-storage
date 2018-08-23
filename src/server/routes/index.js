@@ -1,1 +1,1 @@
-export { default as upload } from './upload'
+export { default as uploadRouter } from './upload'

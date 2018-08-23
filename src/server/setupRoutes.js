@@ -2,16 +2,18 @@ import { Router } from 'express'
 import path from 'path'
 import multer from 'multer'
 
-import { upload } from './routes'
+import { uploadRouter } from './routes'
 
 function createRoutes() {
   const router = new Router()
-  const multerMiddleware = multer({ dest: 'uploads/' })
+  const multerMiddleware = multer({
+    dest: path.resolve('public/photo-storage')
+  })
 
-  router.use('/upload', multerMiddleware.single('file'), upload)
+  router.use('/upload', multerMiddleware.array('files', 12), uploadRouter)
 
   router.use('/', (req, res) => {
-    res.sendFile(path.join(`${__dirname}/index.html`))
+    res.sendFile(path.resolve('public/index.html'))
   })
 
   return router

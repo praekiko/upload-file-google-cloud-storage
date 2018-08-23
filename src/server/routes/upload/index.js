@@ -1,48 +1,30 @@
-import fs from 'fs'
-import Storage from '@google-cloud/storage'
+import { Router } from 'express'
 
 import config from '../../../common/config'
+import GoogleStorage from '../../../common/utils/GoogleStorage'
 
-const { projectId, bucketName, keyFilename } = config
+const { bucketName } = config
+const googleStorage = new GoogleStorage(bucketName)
 
-const storage = Storage({
-  projectId,
-  keyFilename
-})
+const uploadFiles = (req, res) => {
+  const { files } = req
+  let promises = []
 
-const bucket = storage.bucket(bucketName)
+  files.forEach(file => {
+    promises.push(googleStorage.uploadFileToGoogleStoragePromise(file))
+  })
 
-const getPublicUrl = fileName =>
-  `https://storage.googleapis.com/${bucketName}/${fileName}`
-
-const upload = (req, res) => {
-  const {
-    file: { originalname, path, mimetype }
-  } = req
-
-  const bucketFile = bucket.file(originalname)
-
-  fs.createReadStream(path)
-    .pipe(
-      bucketFile.createWriteStream({
-        metadata: {
-          contentType: mimetype
-        },
-        resumable: false
-      })
-    )
-    .on('error', error => {
-      file.cloudStorageError = error
-
-      res.status(404).send({ success: false, file })
+  Promise.all(promises)
+    .then(result => {
+      return res.status(200).send(result)
     })
-    .on('finish', () => {
-      bucketFile.makePublic().then(() => {
-        file.cloudStoragePublicUrl = getPublicUrl(originalname)
-
-        res.status(200).send({ success: true, file })
-      })
+    .catch(error => {
+      return res.status(404).send(error)
     })
 }
 
-export default upload
+const router = new Router()
+
+router.post('/', uploadFiles)
+
+export default router
