@@ -11,16 +11,19 @@
   "author": "Lalitwadee Damyos",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/storage": "^5.8.1",
-    "body-parser": "^1.19.0",
+    "@google-cloud/storage": "^5.18.0",
+    "body-parser": "^1.19.1",
     "cors": "^2.8.5",
-    "dotenv": "^8.0.0",
+    "dotenv": "^14.2.0",
     "esm": "^3.2.25",
-    "express": "^4.17.1",
-    "morgan": "^1.9.1",
-    "multer": "^1.4.1"
+    "express": "^4.17.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.15"
+  },
+  "resolutions": {
+    "node-fetch": "^3.2.0"
   }
 }
